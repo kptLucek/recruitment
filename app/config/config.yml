@@ -71,3 +71,15 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+monolog:
+    channels: [ email_change ]
+    handlers:
+        email_change_stream:
+            type: stream
+
+
+        email_change_crossed:
+            type: stream
+            path: "%kernel.logs_dir%/email_change.log"
+            channels: email_change

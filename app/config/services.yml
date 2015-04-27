@@ -5,3 +5,19 @@ services:
         class: AppBundle\Service\StatsSystem
     marketing_system:
         class: AppBundle\Service\MarketingSystem
+
+    email_change_system:
+        class: AppBundle\Service\EmailChangingSystem
+        arguments: [ @user_repository, @event_dispatcher ]
+
+    email_change.listener:
+        class: AppBundle\Event\EmailChangeListener
+        arguments: [ @stats_system, @marketing_system, @monolog.logger.email_change ]
+        tags:
+            - { name: kernel.event_listener, event: EMAIL_CHANGE_EVENT, method: onEmailChange }
+
+    email_change.command:
+            class: AppBundle\Console\EmailChangeCommand
+            arguments: [ @email_change_system ]
+            tags:
+                -  { name: console.command }

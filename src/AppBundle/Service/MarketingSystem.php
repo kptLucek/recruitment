@@ -9,7 +9,7 @@
 namespace AppBundle\Service;
 
 
-class MarketingSystem
+class MarketingSystem implements NotificationableInterface
 {
 	public function postRequest($data)
 	{

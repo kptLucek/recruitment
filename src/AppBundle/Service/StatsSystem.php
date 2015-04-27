@@ -9,7 +9,7 @@
 namespace AppBundle\Service;
 
 
-class StatsSystem
+class StatsSystem implements NotificationableInterface
 {
 	public function postRequest($data)
 	{

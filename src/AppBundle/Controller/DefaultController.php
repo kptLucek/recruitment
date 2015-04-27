@@ -2,8 +2,13 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Exception\EmailChangeException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DefaultController extends Controller
 {
@@ -13,5 +18,56 @@ class DefaultController extends Controller
     public function indexAction()
     {
         return $this->render('default/index.html.twig');
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/email-change", name="app_email_change")
+     * @Method("GET")
+     * @return JsonResponse
+     */
+    public function emailChangeAction(Request $request)
+    {
+        try {
+            $resolved = $this->resolveParams($request->query->all());
+        } catch (\Exception $exception) {
+            return new JsonResponse(['code' => 500, 'message' => $exception->getMessage()]);
+        }
+        $mailChange = $this->get('email_change_system');
+        try {
+            $mailChange->changeEmail($resolved['old_email'], $resolved['new_email']);
+        } catch (EmailChangeException $exception) {
+            return new JsonResponse(['code' => 500, 'message' => $exception->getMessage()]);
+        }
+
+        return new JsonResponse(['status' => 200, 'message' => 'Email successfully changed.']);
+
+    }
+
+    /**
+     * @param array $array
+     * @return mixed
+     */
+    protected function resolveParams(array $array)
+    {
+        $optionsResolver = new OptionsResolver();
+        $optionsResolver->setDefined(['old_email', 'new_email']);
+        $optionsResolver->setRequired(['old_email', 'new_email']);
+        $optionsResolver->setAllowedTypes('old_email', ['string']);
+        $optionsResolver->setAllowedTypes('new_email', ['string']);
+        $optionsResolver->setAllowedValues(
+            'old_email',
+            function ($value) {
+                return filter_var($value, FILTER_VALIDATE_EMAIL);
+            }
+        );
+        $optionsResolver->setAllowedValues(
+            'new_email',
+            function ($value) {
+                return filter_var($value, FILTER_VALIDATE_EMAIL);
+            }
+        );
+
+        return $optionsResolver->resolve($array);
     }
 }
