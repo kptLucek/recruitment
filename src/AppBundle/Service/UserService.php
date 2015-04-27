@@ -10,11 +10,11 @@ use AppBundle\Model\UserRepository;
 use Symfony\Component\EventDispatcher\Debug\TraceableEventDispatcherInterface;
 
 /**
- * Class EmailChangingSystem.php
+ * Class UserService.php
  * @package AppBundle\Service
  * @author Marcin Bonk <marvcin@gmail.com>
  */
-class EmailChangingSystem
+class UserService
 {
     /**
      * @var UserRepository

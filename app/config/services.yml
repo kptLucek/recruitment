@@ -7,7 +7,7 @@ services:
         class: AppBundle\Service\MarketingSystem
 
     user_service:
-        class: AppBundle\Service\EmailChangingSystem
+        class: AppBundle\Service\UserService
         arguments: [ @user_repository, @event_dispatcher ]
 
     email_change.listener:
