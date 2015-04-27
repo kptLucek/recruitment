@@ -6,7 +6,7 @@ services:
     marketing_system:
         class: AppBundle\Service\MarketingSystem
 
-    email_change_system:
+    user_service:
         class: AppBundle\Service\EmailChangingSystem
         arguments: [ @user_repository, @event_dispatcher ]
 
@@ -18,6 +18,6 @@ services:
 
     email_change.command:
             class: AppBundle\Console\EmailChangeCommand
-            arguments: [ @email_change_system ]
+            arguments: [ @user_service ]
             tags:
                 -  { name: console.command }

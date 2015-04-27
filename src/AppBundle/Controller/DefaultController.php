@@ -2,13 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Exception\EmailChangeException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DefaultController extends Controller
 {
@@ -25,18 +20,15 @@ class DefaultController extends Controller
      * @Route("/email-change", name="app_email_change")
      * @Method("GET")
      * @return JsonResponse
+     * @Cache(smaxage="60")
      */
     public function emailChangeAction(Request $request)
     {
         try {
             $resolved = $this->resolveParams($request->query->all());
-        } catch (\Exception $exception) {
-            return new JsonResponse(['code' => 500, 'message' => $exception->getMessage()]);
-        }
-        $mailChange = $this->get('email_change_system');
-        try {
+            $mailChange = $this->get('user_service');
             $mailChange->changeEmail($resolved['old_email'], $resolved['new_email']);
-        } catch (EmailChangeException $exception) {
+        } catch (\Exception $exception) {
             return new JsonResponse(['code' => 500, 'message' => $exception->getMessage()]);
         }
 
