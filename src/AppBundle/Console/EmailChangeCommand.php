@@ -3,6 +3,7 @@
 namespace AppBundle\Console;
 
 use AppBundle\Service\EmailChangingSystem;
+use AppBundle\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,16 +17,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 class EmailChangeCommand extends ContainerAwareCommand
 {
     /**
-     * @var EmailChangingSystem
+     * @var UserService
      */
-    protected $emailChangingSystem;
+    protected $userService;
 
     /**
-     * @param EmailChangingSystem $emailChangingSystem
+     * @param UserService $emailChangingSystem
      */
-    public function __construct(EmailChangingSystem $emailChangingSystem)
+    public function __construct(UserService $emailChangingSystem)
     {
-        $this->emailChangingSystem = $emailChangingSystem;
+        $this->userService = $emailChangingSystem;
         parent::__construct();
     }
 
@@ -50,7 +51,7 @@ class EmailChangeCommand extends ContainerAwareCommand
     {
         $current = $input->getArgument('current_email');
         $new = $input->getArgument('new_email');
-        $this->emailChangingSystem->changeEmail($current, $new);
+        $this->userService->changeEmail($current, $new);
 
         $output->writeln(sprintf(
             'Email for user changed from "%s" to "%s"',
